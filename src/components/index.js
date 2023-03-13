@@ -1,6 +1,8 @@
 import Header from "./Header/Header";
 import Body from "./Body/Body";
-import AnomallyItem from "./AnomallyItem/AnomallyItem";
+import AnomalyItem from "./AnomalyItem/AnomalyItem";
 import AnomalyMedia from "./AnomalyMedia/AnomalyMedia";
+import SidePanel from "./SidePanel/SidePanel";
+import MainPage from "./MainPage/MainPage";
 
-export {Header, Body, AnomallyItem, AnomalyMedia}
+export {Header, Body, AnomalyItem, AnomalyMedia, SidePanel, MainPage}

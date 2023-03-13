@@ -15,6 +15,9 @@
 .filter {
     height: 43px;
     border-bottom: 1px solid #A2AEBC;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .main-content {
@@ -24,7 +27,8 @@
 }
 
 .side-panel {
-    width: 385px;
+    width: 315px;
+    /* width: 385px; */
     display: flex;
     flex-direction: column;
     /* border-right: 1px solid #A2AEBC; */
@@ -82,6 +86,7 @@
     justify-content: space-evenly;
     align-items: flex-start;
     flex-direction: column;
+    cursor: pointer;
     /* background-color: #3478FC; */
 }
 
@@ -101,7 +106,7 @@
     width: 80px;
     height: 20px;
     border-radius: 10px;
-    background-color: #FCA034;
+    /* background-color: #FCA034; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -142,7 +147,7 @@
 
 .main-page {
     /* background-color: #2A2E5D; */
-    width: 100%;
+    width: calc(100% - 315px);
     padding-left: 20px;
     padding-right: 50px;
     border-left: 1px solid #A2AEBC;
