@@ -6,8 +6,8 @@ import {AnomalyItem} from "../index";
 
 function SidePanel(props) {
     const dataToShow = () => {
-        if (props.filterType) return props.anomalyList.filter(anomaly => anomaly.machineType === props.filterType)
-        return props.anomalyList
+        if (props?.filterType) return props?.anomalyList.filter(anomaly => anomaly.machineType === props?.filterType)
+        return props?.anomalyList
     }
     const totalAnomaly = dataToShow().length
     const unSeenAnomaly = dataToShow().filter(anomaly => !anomaly.seenStatus).length
@@ -23,7 +23,7 @@ function SidePanel(props) {
             </div>
             <div className='data-list'>
                 {
-                    dataToShow().map((anomaly, idx) => <AnomalyItem key={idx} anomaly={anomaly} anomalySelected={props.anomalySelected} setAnomalySelected={props.setAnomalySelected} anomalyLevelList={props.anomalyLevelList} typeList={props.typeList} />)
+                    dataToShow().map((anomaly, idx) => <AnomalyItem key={idx} anomaly={anomaly} anomalySelected={props?.anomalySelected} setAnomalySelected={props?.setAnomalySelected} anomalyReasonList={props?.reasonList} anomalyLevelList={props?.anomalyLevelList} typeList={props?.typeList} />)
                 }
             </div>
         </div>

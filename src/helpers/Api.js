@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080';
+import {API_BASE_URL} from './Config'
+
 
 export const getListMachineType = () => {
   return axios.get(`${API_BASE_URL}/list/machinetype`);
@@ -26,10 +27,6 @@ export const getAnomalyDetail = id => {
   return axios.get(`${API_BASE_URL}/anomaly/${id}`);
 };
 
-// export const createItem = (itemData) => {
-//   return axios.post(`${API_BASE_URL}/items`, itemData);
-// };
-
-// export const updateItem = (itemId, itemData) => {
-//   return axios.put(`${API_BASE_URL}/items/${itemId}`, itemData);
-// };
+export const updateAnomaly = (id, anomaly) => {
+  return axios.post(`${API_BASE_URL}/anomaly/${id}`, anomaly);
+};

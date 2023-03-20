@@ -1,7 +1,8 @@
 import React from 'react'
+import { AnomalyChart } from '..';
 
 
-function AnomalyMedia({ title, wavUrl, imgAnomali1, imgAnomali2}) {
+function AnomalyMedia({ title, wavUrl, type, imgAnomali1, imgAnomali2}) {
     const styles = {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
@@ -31,8 +32,16 @@ function AnomalyMedia({ title, wavUrl, imgAnomali1, imgAnomali2}) {
             <audio controls controlsList="nofullscreen nodownload noremoteplayback noplaybackrate foobar" src={wavUrl} className='media-player' style={playerStyles}>
                 Your browser does not support the audio element.
             </audio>
-            <div className='anomaly-image' style={{...anomalyStyles1, ...styles}}></div>
-            <div className='anomaly-image' style={{...anomalyStyles2, ...styles}}></div>
+            {
+                type === "normal" ? (
+                    <div style={{marginTop: 20}}>
+                        <div className='anomaly-image' style={{...anomalyStyles1, ...styles}}></div>
+                        <div className='anomaly-image' style={{...anomalyStyles2, ...styles}}></div>
+                    </div>
+                ) : (
+                    <AnomalyChart src={wavUrl} />
+                )
+            }
         </div>
     )
 }

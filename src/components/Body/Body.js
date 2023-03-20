@@ -4,7 +4,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 import {MainPage, SidePanel} from "../index";
-import { getListAction, getListAnomalyReason, getListMachineType, getListAnomaly, getListAnomalyLevel, getAnomalyDetail} from "../../helpers/Api"
+import { getListAction, getListAnomalyReason, getListMachineType, getListAnomaly, getListAnomalyLevel, getAnomalyDetail, updateAnomaly} from "../../helpers/Api"
 import AlertMessage from "../../helpers/AlertMessage"
 
 import "./Body.css"
@@ -12,6 +12,8 @@ import "./Body.css"
 function Body() {
     const [filterType, setFilterType] = useState();
     const [typeList, setTypeList] = useState([]);
+    
+    const [comment, setComment] = useState('');
 
     const [reason, setReason] = useState();
     const [reasonList, setReasonList] = useState([]);
@@ -24,21 +26,75 @@ function Body() {
     const [anomalySelected, setAnomalySelected] = useState({});
 
     const [error, setError] = useState({status: false, message: ''});
+    const [idTimeout, setIdTimeout] = useState();
 
-    const throwError = () => setError({status: true, message: 'Failed to fetch some data! Please refresh the page!'})
+    const throwError = () => {
+        setError({status: true, message: 'Failed to fetch some data! Please refresh the page!'})
+        resetError()
+    }
+    const throwUpdateError = () => {
+        setError({status: true, message: 'Failed save data!'})
+        resetError()
+    }
 
     const borderStyle = !anomalySelected?.id ? {borderRight: '1px solid #A2AEBC'} : {}
+
+    const resetError = () => {
+        if(idTimeout) clearTimeout(idTimeout)
+        
+        const id = setTimeout(() => {
+            setError({status: false, message: ''})
+        }, 5000);
+        setIdTimeout(id)
+    }
+
+    const updateHandler = () => {
+        const dataUpdate = {
+            ...anomalySelected,
+            action: action,
+            anomalyReason: reason,
+            comment: comment
+        }
+
+        // update anomaly
+        updateAnomaly(anomalySelected?.id, dataUpdate)
+          .then(response => {
+
+            if(response?.data?.status === "success"){
+                // re-load loadListAnomaly
+                loadListAnomaly();
+                // re-fetch anomaly detail
+                getAnomalySelected(response?.data);
+            } else throwUpdateError()
+          })
+          .catch(error => throwUpdateError())
+    }
 
     const getAnomalySelected = anomaly => {
         // get anomali detail
         getAnomalyDetail(anomaly?.id)
           .then(response => {
             if(response?.data?.status === "success"){
-                console.log(response?.data?.data)
-                setAnomalySelected(response?.data?.data)
+                const dataSelected = response?.data?.data
+                setAnomalySelected(dataSelected)
+
+                setComment(dataSelected?.comment || '')
+                setReason(dataSelected?.anomalyReason || 0)
+                setAction(dataSelected?.action || 0)
             } else throwError()
           })
           .catch(error => throwError());
+    }
+
+    const loadListAnomaly = () => {
+        // get list anomaly
+        getListAnomaly()
+        .then(response => {
+            if(response?.data?.status === "success"){
+                setAnomalyList(response?.data?.data)
+            } else throwError()
+        })
+        .catch(error => throwError());
     }
 
     useEffect(() => {
@@ -78,20 +134,14 @@ function Body() {
         })
         .catch(error => throwError());
 
-        // get list anomaly
-        getListAnomaly()
-        .then(response => {
-            if(response?.data?.status === "success"){
-                setAnomalyList(response?.data?.data)
-            } else throwError()
-        })
-        .catch(error => throwError());
+        loadListAnomaly();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
 
     return (
         <div className='body'>
             {/* Error Handler */}
-            { error?.status && <AlertMessage message={error?.message}/> }
+            { error?.status && <AlertMessage message={error?.message} status={error?.status} /> }
 
             <div className='container'>
                 <div className='filter'>
@@ -106,9 +156,9 @@ function Body() {
                     </Select>
                 </div>
                 <div className='main-content'>
-                    <SidePanel filterType={filterType} anomalyLevelList={anomalyLevelList} anomalyList={anomalyList} typeList={typeList} anomalySelected={anomalySelected} setAnomalySelected={getAnomalySelected} borderStyle={borderStyle} />
+                    <SidePanel filterType={filterType} anomalyLevelList={anomalyLevelList} anomalyList={anomalyList} reasonList={reasonList} typeList={typeList} anomalySelected={anomalySelected} setAnomalySelected={getAnomalySelected} borderStyle={borderStyle} />
                     {   anomalySelected?.id &&
-                        <MainPage anomalySelected={anomalySelected} reason={reason} setReason={setReason} reasonList={reasonList} action={action} setAction={setAction} actionList={actionList} />
+                        <MainPage anomalySelected={anomalySelected} reason={reason} setReason={setReason} reasonList={reasonList} action={action} setAction={setAction} actionList={actionList} comment={comment} setComment={setComment} updateHandler={updateHandler} />
                     }
                 </div>
             </div>

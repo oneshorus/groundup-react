@@ -1,0 +1,28 @@
+.waveform-container {
+    display: flex;
+    flex-direction: row;
+    height: 164px;
+    width: 391px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.waveform-labels {
+    display: flex;
+    flex-direction: column;
+    font-size: small;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    margin-right: 10px;
+    /* margin-top: 20px; */
+    width: 40px;
+
+}
+
+.waveform-chart {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    width: 341px;
+    height: 100%;
+}
