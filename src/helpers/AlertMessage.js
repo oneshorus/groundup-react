@@ -1,24 +1,22 @@
 import React from 'react'
 
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import Snackbar from '@mui/material/Snackbar';
+import { Alert, AlertTitle, Snackbar } from '@mui/material';
 
 
-function AlertMessage({ message, status }) {
+function AlertMessage({ notification }) {
     // const [open, setOpen] = useState(status)
 
     return (
         <Snackbar
-        open={status}
+        open={notification?.status}
         key={'topright'}
         // autoHideDuration={5000}
         // onClose={() => setOpen(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
-            <Alert severity="error">
-                <AlertTitle>Error</AlertTitle>
-                {message}
+            <Alert severity={notification?.type}>
+                <AlertTitle>{notification?.type.toUpperCase()}</AlertTitle>
+                {notification?.message}
             </Alert>
         </Snackbar>
     )

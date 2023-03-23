@@ -21,6 +21,7 @@
 .header-item.page {
     padding-left: 25px;
     padding-right: 25px;
+    cursor: pointer;
 }
 
 .header-item.alert {

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { ArrowLeft } from '@mui/icons-material';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import {AnomalyItem} from "../index";
 
@@ -23,7 +24,22 @@ function SidePanel(props) {
             </div>
             <div className='data-list'>
                 {
-                    dataToShow().map((anomaly, idx) => <AnomalyItem key={idx} anomaly={anomaly} anomalySelected={props?.anomalySelected} setAnomalySelected={props?.setAnomalySelected} anomalyReasonList={props?.reasonList} anomalyLevelList={props?.anomalyLevelList} typeList={props?.typeList} />)
+                    props?.listLoading ? (
+                        <div className='side-panel' style={props?.borderStyle}>
+                            <LinearProgress />
+                        </div>
+                    ) :
+                    dataToShow().map((anomaly, idx) => (
+                        <AnomalyItem 
+                            key={idx} 
+                            anomaly={anomaly} 
+                            anomalySelected={props?.anomalySelected} 
+                            setAnomalySelected={props?.setAnomalySelected} 
+                            anomalyReasonList={props?.reasonList} 
+                            anomalyLevelList={props?.anomalyLevelList} 
+                            typeList={props?.typeList} 
+                        />
+                    ))
                 }
             </div>
         </div>

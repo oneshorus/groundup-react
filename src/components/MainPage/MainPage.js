@@ -1,9 +1,7 @@
 import React from 'react'
 
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import { Select, MenuItem, TextField, Button } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import {AnomalyMedia} from "../index";
 import DateFormat from '../../helpers/DateFormat'
@@ -15,6 +13,9 @@ function MainPage(props) {
 
     const defaultWavUrl = API_BASE_URL + '/media/default/' + props?.anomalySelected?.machineTypeId;
     const currentWavUrl = API_BASE_URL + '/media/' + props?.anomalySelected?.sensorId + '/' + timestamp;
+
+    if (props?.detailLoading)
+        return <div className='main-page'><LinearProgress /></div>
 
     return (
         <div className='main-page'>
@@ -58,7 +59,8 @@ function MainPage(props) {
                 <div className='row-title'>Comments</div>
                 <TextField multiline rows={3} value={props?.comment} fullWidth={true} onChange={e => props?.setComment(e.target.value)} />
                 
-                <Button variant="contained" style={{ marginTop: '35px' }} onClick={props?.updateHandler}>UPDATE</Button>
+                
+                <Button variant="contained" style={{ marginTop: '35px' }} disabled={props?.updateLoading} onClick={props?.updateHandler}>UPDATE</Button>
             </div>
         </div>
     )

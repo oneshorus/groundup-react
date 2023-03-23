@@ -25,25 +25,29 @@ function Body() {
     const [anomalyList, setAnomalyList] = useState([]);
     const [anomalySelected, setAnomalySelected] = useState({});
 
-    const [error, setError] = useState({status: false, message: ''});
+    const [updateLoading, setUpdateLoading] = useState(false);
+    const [listLoading, setListLoading] = useState(false);
+    const [detailLoading, setDetailLoading] = useState(true);
+
+    const [notification, setNotification] = useState({status: false, message: '', type: ''});
     const [idTimeout, setIdTimeout] = useState();
 
     const throwError = () => {
-        setError({status: true, message: 'Failed to fetch some data! Please refresh the page!'})
-        resetError()
+        setNotification({status: true, message: 'Failed to fetch some data! Please contact Administrator!', type: 'error'})
+        resetNotificationMessage()
     }
     const throwUpdateError = () => {
-        setError({status: true, message: 'Failed save data!'})
-        resetError()
+        setNotification({status: true, message: 'Failed to save data!', type: 'error'})
+        resetNotificationMessage()
     }
 
     const borderStyle = !anomalySelected?.id ? {borderRight: '1px solid #A2AEBC'} : {}
 
-    const resetError = () => {
+    const resetNotificationMessage = () => {
         if(idTimeout) clearTimeout(idTimeout)
         
         const id = setTimeout(() => {
-            setError({status: false, message: ''})
+            setNotification({status: false, message: '', type: ''})
         }, 5000);
         setIdTimeout(id)
     }
@@ -57,20 +61,22 @@ function Body() {
         }
 
         // update anomaly
+        setUpdateLoading(true);
         updateAnomaly(anomalySelected?.id, dataUpdate)
           .then(response => {
 
             if(response?.data?.status === "success"){
                 // re-load loadListAnomaly
                 loadListAnomaly();
-                // re-fetch anomaly detail
-                getAnomalySelected(response?.data);
+                setNotification({status: true, message: 'Data successfully updated!', type: 'success'})
             } else throwUpdateError()
           })
+          .finally(() => setUpdateLoading(false))
           .catch(error => throwUpdateError())
     }
 
     const getAnomalySelected = anomaly => {
+        setDetailLoading(true);
         // get anomali detail
         getAnomalyDetail(anomaly?.id)
           .then(response => {
@@ -83,17 +89,23 @@ function Body() {
                 setAction(dataSelected?.action || 0)
             } else throwError()
           })
+          .finally(() => setDetailLoading(false))
           .catch(error => throwError());
     }
 
     const loadListAnomaly = () => {
+        setListLoading(true);
         // get list anomaly
         getListAnomaly()
         .then(response => {
             if(response?.data?.status === "success"){
                 setAnomalyList(response?.data?.data)
+                if(response?.data?.data.length && !anomalySelected?.id){
+                    getAnomalySelected(response?.data?.data[0])
+                }
             } else throwError()
         })
+        .finally(() => setListLoading(false))
         .catch(error => throwError());
     }
 
@@ -140,8 +152,8 @@ function Body() {
 
     return (
         <div className='body'>
-            {/* Error Handler */}
-            { error?.status && <AlertMessage message={error?.message} status={error?.status} /> }
+            {/* Notification Message Handler */}
+            { notification?.status && <AlertMessage notification={notification} /> }
 
             <div className='container'>
                 <div className='filter'>
@@ -156,9 +168,32 @@ function Body() {
                     </Select>
                 </div>
                 <div className='main-content'>
-                    <SidePanel filterType={filterType} anomalyLevelList={anomalyLevelList} anomalyList={anomalyList} reasonList={reasonList} typeList={typeList} anomalySelected={anomalySelected} setAnomalySelected={getAnomalySelected} borderStyle={borderStyle} />
+                    <SidePanel 
+                        filterType={filterType} 
+                        anomalyLevelList={anomalyLevelList} 
+                        anomalyList={anomalyList} 
+                        reasonList={reasonList} 
+                        typeList={typeList} 
+                        anomalySelected={anomalySelected} 
+                        setAnomalySelected={getAnomalySelected} 
+                        borderStyle={borderStyle} 
+                        listLoading={listLoading}
+                    />
                     {   anomalySelected?.id &&
-                        <MainPage anomalySelected={anomalySelected} reason={reason} setReason={setReason} reasonList={reasonList} action={action} setAction={setAction} actionList={actionList} comment={comment} setComment={setComment} updateHandler={updateHandler} />
+                        <MainPage 
+                            anomalySelected={anomalySelected} 
+                            reason={reason} 
+                            setReason={setReason} 
+                            reasonList={reasonList} 
+                            action={action} 
+                            setAction={setAction} 
+                            actionList={actionList} 
+                            comment={comment} 
+                            setComment={setComment} 
+                            updateHandler={updateHandler} 
+                            updateLoading={updateLoading} 
+                            detailLoading={detailLoading}
+                        />
                     }
                 </div>
             </div>

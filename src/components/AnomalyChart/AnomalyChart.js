@@ -1,35 +1,42 @@
 import React, { useEffect, useRef } from 'react';
 import WaveSurfer from 'wavesurfer.js';
+import SpectrogramPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js';
+import TimelinePlugin from 'wavesurfer.js/src/plugin/timeline';
+import ColorMap from 'colormap';
 
-import {SpectrogramColorMap} from '../../helpers/Config'
-
-import "./AnomalyChart.css"
+import "./AnomalyChart.css";
 
 
 function AudioVisualizer({ src }) {
   const waveformRef = useRef(null);
   const spectrogramformRef = useRef(null);
-
-  var spectrogramPlugin = require("wavesurfer.js/dist/plugin/wavesurfer.spectrogram.min.js");
+  const timelineformRef = useRef(null);
 
   useEffect(() => {
 
     const wavesurfer = WaveSurfer.create({
       container: waveformRef.current,
-      waveColor: '#1f77b4',
+      waveColor: 'rgba(55, 96, 183, 0.91)',
       progressColor: 'rgba(55, 96, 183, 0.91)',
       height: 144,
       barHeight: 2,
       responsive: true,
       fillParent: true,
       plugins: [
-        spectrogramPlugin.create({
+        SpectrogramPlugin.create({
           container: spectrogramformRef.current,
           labels: true,
           frequencyMin: 0,
           frequencyMax: 8192,
-          colorMap: SpectrogramColorMap,
+          colorMap: ColorMap({
+            colormap: 'temperature',
+            nshades: 256,
+            format: 'float'
+          }),
         }),
+        TimelinePlugin.create({
+          container: timelineformRef.current,
+      }),
       ],
     });
 
@@ -58,6 +65,7 @@ function AudioVisualizer({ src }) {
         <div className='waveform-chart' ref={waveformRef} />
       </div>
       <div ref={spectrogramformRef} />
+      <div ref={timelineformRef} />
     </div>
   );
 }
